@@ -58,39 +58,42 @@ int main(){
 
     // initialize the registraion.csv file
     ofstream registration_csv;
-    registration_csv.open("local4.csv");
+    registration_csv.open("data/local4.csv");
     registration_csv << ",id,name,profession,age,age_group,medical_risk,registration time,deadline,address,phone,wechat,email,birthday,hospital priority" << endl;
     //prepare local queue and ID sheet
     int i,j;
 
     int op=1;
     while (op != 0 ){
-        cout << "\n\nChoose an operation:\n";
-        cout << "O: quit\n";
-        cout << "1: jump half day\n";
-        cout << "2: jump a week\n";
-        cout << "3: jump a month\n";
-        cout << "4: register\n";
-        cout << "5: withdraw\n";
-        cout << "6: list all valid ID\n";
-        cout << "7: revise information\n";
+        cout << "\nWe are on the " << (passedhdays % 2? "afternoon" : "morning") << " of January " << passedhdays / 2 + 1 << ", 2022.\n\n";
+        cout << "O: Quit\n";
+        cout << "1: Jump half a day\n";
+        cout << "2: Jump a week\n";
+        cout << "3: Jump a month\n";
+        cout << "4: Manual register\n";
+        cout << "5: Withdraw\n";
+        cout << "6: List all valid IDs\n";
+        cout << "7: Update information\n";
+        cout << "\nChoose an operation: ";
         cin >> op ;
         switch(op){
             case 0:{
-                // need delete objects?
+                system("clear");
                 break;
             }
             case 1:
             {
+                system("clear");
                 if (passedhdays >= 56){
                         cout << "We can only simulate a month" << endl;
                         return 0;
                 }
                 skip_half_day(op);
-                cout << "jump half day" << endl;
+                cout << "Jump half a day" << endl;
                 break;
             }
             case 2:{
+                system("clear");
                 for (i=0;i<14;i++){
                     if (passedhdays >= 56){
                         cout << "We can only simulate a month" << endl;
@@ -101,6 +104,7 @@ int main(){
                 break;
             }
             case 3:{
+                system("clear");
                 for (i=0;i<56;i++){
                     if (passedhdays >= 56){
                         cout << "We can only simulate a month" << endl;
@@ -115,10 +119,11 @@ int main(){
                 personalinfo a;
                 if (a.local_register(timeflow) == 1)
                     a.local_store();
+                system("clear");
                 break;
             }
             case 5:{
-                cout<<"Please input the id of the patient you want to withdraw: ";
+                cout<<"\nPlease input the ID of the patient you want to withdraw: ";
                 int inputid;
                 cin >> inputid;
                 int flag = 0;
@@ -151,36 +156,41 @@ int main(){
                         break;
                     }
                 }
+                system("clear");
                 if (flag == 0)
                     cout << "No such patient" << endl;
+                else
+                    cout << "Patient " << inputid << " has been withdrawn" << endl;
                 break;
             }
             case 6:{
+                system("clear");
                 for (i=0;i<IDsheet.size();i++){
                     cout << IDsheet[i]->id << " " << IDsheet[i]->name << endl;
                 }
                 break;
             }  
             case 7: {
-                cout << "Please input the id of the patient you want to revise: ";
+                cout << "\nPlease input the ID of the patient you want to update: ";
                 int inputid,flag,choice;
                 flag =0;
                 cin >> inputid;
 
                 for (i=0;i<IDsheet.size();i++){
                     if (IDsheet[i]->id == inputid){
-                        cout << "please tell me the new information" << endl;
-                        cout << "choose 1 for new medical risk (0 to 3)\n";
-                        cout << "choose 2 for new profession (1 to 8)\n";
+                        cout << "\nChoose 1 for new medical risk (0 to 3)\n";
+                        cout << "Choose 2 for new profession (1 to 8)\n";
+                        cout << "Please select the new information type: ";
                         cin >> choice;
                         switch (choice){
                             case 1:{
-                                cout << "please input the new medical risk: ";
+                                cout << "\nPlease input the new medical risk: ";
                                 int risk;
                                 uint64_t new_priority;
                                 cin >> risk;
                                 if (risk < 0 || risk > 3){
-                                    cout << "wrong input" << endl;
+                                    system("clear");
+                                    cout << "Invalid option" << endl;
                                     break;
                                 }
                                 IDsheet[i]->medical_risk = risk;
@@ -199,17 +209,20 @@ int main(){
 
                                 new_priority = IDsheet[i]->priority;
                                 if (IDsheet[i]->appointment == 0){
-                                    Fheap.decrease_key(inputid, new_priority);
+                                    Fheap.modify_key(inputid, new_priority);
                                 }
+                                system("clear");
+                                cout << "Patient " << inputid << "'s medical risk has been updated to " << risk << endl;
                                 break;
                             }
                             case 2:{
-                                cout << "please input the new profession: ";
+                                cout << "\nPlease input the new profession: ";
                                 int prof;
                                 cin >> prof;
                                 uint64_t new_priority;
                                 if (prof < 1 || prof > 8){
-                                    cout << "wrong input" << endl;
+                                    system("clear");
+                                    cout << "Invalid option" << endl;
                                     break;
                                 }
                                 //new priority
@@ -227,25 +240,31 @@ int main(){
 
                                 new_priority = IDsheet[i]->priority;
                                 if (IDsheet[i]->appointment == 0){
-                                    Fheap.decrease_key(inputid, new_priority);
+                                    Fheap.modify_key(inputid, new_priority);
                                 }
+                                system("clear");
+                                cout << "Patient " << inputid << "'s profession has been updated to " << prof << endl;
                                 break;
                             }
                             default:
-                                cout << "wrong choice" << endl;
+                                system("clear");
+                                cout << "Invalid option" << endl;
                                 break;
                         }
-                        // revise information
+                        // update information
                         flag = 1;
                         break;
                     }
                 }
-                if (flag == 0)
+                if (flag == 0) {
+                    system("clear");
                     cout << "No such patient" << endl;
+                }
                 break;
             }
             default:
-                cout << "wrong choice" << endl;
+                system("clear");
+                cout << "Invalid option" << endl;
                 break; 
         }
     }

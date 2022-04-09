@@ -86,7 +86,7 @@ public:
 	centerqueue();
 	int insert_node(centernode* node);
 	int delete_node(int id);
-	int decrease_key(int id, uint64_t k);
+	int modify_key(int id, uint64_t k);
 	int consolidate();
 	centernode* extract_min();
 	centernode* search_heap(int id);
@@ -109,7 +109,7 @@ class report{
     vector<centernode*> not_treated;             // in F-heap 
     // how many are waitng is appointment plus not_treated
     void store_data();
-    void generalize_report(char* filename);
+    void generate_report(char* filename);
     void clear_report();                         // each week clear the report once 
                                                  // or each month clear the report once
     void sort_nodes_profession();

@@ -32,12 +32,12 @@ int centerqueue::insert_node(centernode* node) {
 	return 0;
 }
 int centerqueue::delete_node(int id) {
-	if (decrease_key(id, INF_NEG) == -1) return -1;   // ERROR: Non-existing ID
+	if (modify_key(id, INF_NEG) == -1) return -1;   // ERROR: Non-existing ID
 	centernode* node = extract_min();
 	blacklist.push_back(node->person);
 	return 0;
 }
-int centerqueue::decrease_key(int id, uint64_t priority) {   // Better be called "modify_key"
+int centerqueue::modify_key(int id, uint64_t priority) {   // Better be called "modify_key"
 	centernode* target = search_heap(id);
 	if (target == NULL) return -1;   // ERROR: Non-existing ID
 	if (priority == target->priority) return 0;   // Priority unchanged

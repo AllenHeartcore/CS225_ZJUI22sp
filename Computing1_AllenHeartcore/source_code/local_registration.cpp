@@ -11,6 +11,8 @@ using namespace std;
 
 typedef struct tm tm_t;
 
+// some constructors defined here
+
 time_location::time_location(){
     registration_time = new tm_t;
 }
@@ -32,6 +34,11 @@ report::report(){
     with_drew_people = 0;
 }
 
+// the interactive interface of medical system 
+
+// input:   current time: the time when the person is registered
+// output:  int: whether the person is registered successfully
+
 int personalinfo::local_register(tm_t* current_time){
     int deadline_state;
     int current_year = 2022;
@@ -41,9 +48,16 @@ int personalinfo::local_register(tm_t* current_time){
     cin  >> name;
     cout << "Please enter your id number (Only one number (9 bits)! No space!)\n";
     cin  >> id;
-    if (id < 100000000 || id > 999999999){
-        cout << "Invalid id number!\n";
-        return 0;
+    int iteration_num = 0;
+    while ((id < 100000000 || id > 999999999) && iteration_num < 3){
+        if (iteration_num < 3){
+            cout << "Invalid id number!\n";
+            cout << "Please enter your id number (Only one number (9 bits)! No space!)\n";
+            cin  >> id;
+            iteration_num++;
+        }
+        else 
+            return 0;
     }
     for (int i = 0; i < IDsheet.size(); i++){
         if (IDsheet[i]->id == id){
@@ -55,7 +69,7 @@ int personalinfo::local_register(tm_t* current_time){
     cin >> birthday;
     cout << "Please enter your profession (1 ~ 8)\n";
     cin  >> profession;
-    if (profession > 8 || profession < 0){
+    if (profession > 8 || profession <= 0){
         cout << "Wrong input! Profession should be 1 ~ 8." << endl;
         return 0;   
     }
@@ -84,15 +98,17 @@ int personalinfo::local_register(tm_t* current_time){
     cin  >> contact->email;
     cout << "Please enter your medical risk (0 ~ 3)\n";
     cin  >> medical_risk;
-    if (medical_risk < 0 || medical_risk > 3){
+    while (medical_risk < 0 || medical_risk > 3){
         cout << "Wrong medical risk! Your risk should be 0 ~ 3" << endl;
-        return 0;
+        cout << "Please enter your medical risk (0 ~ 3)\n";
+        cin  >> medical_risk;
     }
     cout << "Do you have deadline? (0:no, 1:yes)\n";
     cin  >> deadline_state;
-    if (deadline_state != 0 && deadline_state != 1){
+    while (deadline_state != 0 && deadline_state != 1){
         cout << "Wrong input!" << endl;
-        return 0;
+        cout << "Do you have deadline? (0:no, 1:yes)\n";
+        cin  >> deadline_state;
     }
     if (deadline_state == 1){
         cout << "Please enter your deadline date (Day Month Year)\n";
@@ -136,12 +152,14 @@ int personalinfo::local_register(tm_t* current_time){
     return 1;
 }
 
+// input:   none
+// output:  none
 void personalinfo::local_store(){
 	// Write file
 	ofstream outFile;
     char* filename;
     filename = new char[100];
-    filename = "local4.csv";
+    filename = "data/local4.csv";
 	outFile.open(filename, ios::app); // File mode omitted
 	outFile <<"," << id << "," << name << "," << profession << "," << age << "," << age_group << "," << medical_risk 
     << "," << registration->registration_time->tm_year << ' ' << registration->registration_time->tm_mon << ' '
@@ -152,5 +170,3 @@ void personalinfo::local_store(){
     << registration->location_id[1] << " " << registration->location_id[2] <<  endl;
 	outFile.close();    
 }
-
-

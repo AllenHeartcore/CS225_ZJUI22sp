@@ -12,10 +12,10 @@
 
 ## **Running the Program**
 
-Please use the provided shell script to compile and execute the code in the Linux terminal. You can manually input the patients' information, and the program will also automatically read the `.csv` documents. 
+Please use the provided shell script to compile and execute the code in the Linux terminal. You can manually input the patients' information, and the program will also automatically read the `data/*.csv` documents. 
 	
-	chmod +x ./medical_system.sh
-	./medical_system.sh
+	chmod +x ./run_medical_system.sh
+	./run_medical_system.sh
 
 There is also a demo program `fibonacci_heap_demo` that presents the functionality of the heap structure. 
 	
@@ -70,13 +70,13 @@ There is also a demo program `fibonacci_heap_demo` that presents the functionali
 
 **`source_code/medical_system.h`** - Header file of definitions
 
-**`medical_system.sh`** - Compilation and execution script
-
-**`localX.csv`** (**`X`** = `1`, `2`, `3`, `4`) - Simulated patient data
-
-**`fibonacci_heap_demo`** - Demo program of fibonacci heap functionality
+**`data/localX.csv`** (**`X`** = `1`, `2`, `3`, `4`) - Simulated patient data
 
 **`sample_reports/`** - Two sample reports (weekly & monthly)
+
+**`medical_system.sh`** - Compilation and execution script
+
+**`fibonacci_heap_demo`** - Demo program of fibonacci heap functionality
 
 ## **Appendix II: Data Structures**
 
@@ -112,7 +112,7 @@ There is also a demo program `fibonacci_heap_demo` that presents the functionali
 
 &emsp; &emsp; `delete_node(id)` - Delete a `centernode` with given ID
 
-&emsp; &emsp; `decrease_key(id, priority)` - Modify the priority of a `centernode`
+&emsp; &emsp; `modify_key(id, priority)` - Modify the priority of a `centernode`
 
 &emsp; &emsp; `extract_min()` - Extract the minimum `centernode` from the heap
 
@@ -162,7 +162,7 @@ There is also a demo program `fibonacci_heap_demo` that presents the functionali
 
 &emsp; &emsp; `store_data()` - Collect patients not yet treated
 
-&emsp; &emsp; `generalize_report(filename)` - Generate a report (monthly or weekly)
+&emsp; &emsp; `generate_report(filename)` - Generate a report (monthly or weekly)
 
 &emsp; &emsp; `clear_report()` - Clear all the data stored in the report
 

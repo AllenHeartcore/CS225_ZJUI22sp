@@ -16,13 +16,13 @@ typedef struct tm tm_t;
 //and some operations on ID sheet or localqueue, black list
 //some for hospital
 
-void skip_half_day(int op){
+void skip_half_day(int op){ 
     localqueue1 = dataloading(timeflow, blacklist, 1);
     localqueue2 = dataloading(timeflow, blacklist, 2);
     localqueue3 = dataloading(timeflow, blacklist, 3);
     localqueue4 = dataloading(timeflow, blacklist, 4);
-    timeflow->tm_hour += 12;
-    if (timeflow->tm_hour >=24){
+    timeflow->tm_hour += 12; //add time
+    if (timeflow->tm_hour >=24){ //if time is over 24, we need to add a day
         timeflow->tm_hour -= 24;
         timeflow->tm_mday += 1;
     }
@@ -32,7 +32,7 @@ void skip_half_day(int op){
 
 void checktime(){
     //check halfdays for local queue
-    if (passedhdays - num_localqueues > 0 ){
+    if (passedhdays - num_localqueues > 0 ){//if we passed halfday, clear local queues and upload to center
         num_localqueues+=1;
         int i;
         for (i=0;i<localqueue1.size();i++){
@@ -64,12 +64,21 @@ void checktime(){
         }
         localqueue4.clear();
     }
-    // a day
+    // a day passed
     if ((passedhdays - 2*num_appointments) >= 2){
         num_appointments += 1;
         int i,j;
         for (i=0;i<3;i++){
-            hos[i]->clear_hospital();
+            hos[i]->clear_hospital(); //clear hospital 
+        }
+        //check whether we have DDL
+        for (i=0;i<IDsheet.size();i++){
+            if (IDsheet[i]->deadline[0]>0){
+                if (IDsheet[i]->deadline[0] == timeflow->tm_mday +1){
+                //change the priority of Fheap
+                Fheap.modify_key(IDsheet[i]->id, 1);
+                }
+            }
         }
         for (i=0;i<15;i++){
             centernode* node = Fheap.extract_min();
@@ -80,7 +89,7 @@ void checktime(){
                 for (j=0;j<3;j++){
                     int index = node->person->registration->location_id[j];
                     if (hos[index-1]->come_hospital(node) == 1){
-                        break;
+                        break; //match person with their preferred hospital
                     }
                 }
             }
@@ -89,10 +98,10 @@ void checktime(){
     // a week
     if ((passedhdays - 14*num_week_report)  >= 14 ){
         num_week_report += (passedhdays/14 - num_week_report);
-        cout << "weekly report" << endl;
+        cout << "Weekly report generating" << endl;
         week_report.store_data();
         int sorttype;
-        cout << "Please enter your sort preference: 1. by profession 2. by name 3. by age group" << endl;
+        cout << "\n1 - By profession, 2 - By name, 3 - By age group\nPlease enter your sort preference: ";
         cin >> sorttype;
         if (sorttype == 1){
             week_report.sort_nodes_profession();
@@ -104,17 +113,17 @@ void checktime(){
             week_report.sort_nodes_age_group();
         }
         else {
-            cout << "Wrong input, no sort!" << endl;
+            cout << "Invalid option, report entries are not sorted!" << endl;
         }
-        week_report.generalize_report("week_report.csv");
+        week_report.generate_report("weekly_report.csv");
         week_report.clear_report();
     }
     // a month
     if (passedhdays > 55){
         num_mon_report +=(passedhdays/56 - num_mon_report);
-        cout << "monthly report" << "passedhdays is " << passedhdays << endl;
+        cout << "Monthly report generating\n" << "passedhdays is " << passedhdays << endl;
         mon_report.store_data();
-        mon_report.generalize_report("month_report.csv");
+        mon_report.generate_report("monthly_report.csv");
         mon_report.clear_report();
     }
 }
@@ -127,7 +136,7 @@ int hospital::come_hospital(centernode* node){
     else{
         this->inhospital.push_back(node);
         node->person->registration->hospital = this->location_id;
-        node->person->appointment = 1;
+        node->person->appointment = 1; //push person into hospital and mark their appointment
         return 1;
     }
 }
@@ -135,7 +144,7 @@ int hospital::come_hospital(centernode* node){
 
 void hospital::clear_hospital(){
     int i,j;
-    for (i = 0; i < inhospital.size(); i++){
+    for (i = 0; i < inhospital.size(); i++){//clacuate waited time
         inhospital[i]->person->waited_time = timeflow->tm_mday - inhospital[i]->person->registration->registration_time->tm_mday;
         inhospital[i]->person->registration->hospital = this->location_id; //which hospital
         week_report.treated.push_back(inhospital[i]);
@@ -143,7 +152,7 @@ void hospital::clear_hospital(){
         week_report.sum_waited_time += inhospital[i]->person->waited_time;
         mon_report.sum_waited_time += inhospital[i]->person->waited_time;
         week_report.treatment += 1;
-        mon_report.treatment += 1;
+        mon_report.treatment += 1; //record treatment
         //delete IDsheet 
         for (j=0;j<IDsheet.size();j++){
             if (IDsheet[j]-> id == inhospital[i]->person->id){
@@ -185,7 +194,7 @@ void report::store_data(){
 
 
 void report::sort_nodes_age_group(){
-    //similar to sort_nodes_profession()
+    //similar to sort_nodes_profession(), sort the nodes in terms of agegroup
     int i,j;
     for (i=0;i<appointment.size();i++){
         for (j=i+1;j<appointment.size();j++){
@@ -218,7 +227,7 @@ void report::sort_nodes_age_group(){
 }
 
 void report::sort_nodes_profession(){
-    //bubble sort
+    //bubble sort, sort interms of profession
     int i,j;
     for (i=0; i<treated.size()-1; i++){
         for (j=0; j<treated.size()-1-i; j++){
@@ -283,10 +292,10 @@ void report::sort_nodes_name(){
     }
 }
 
-void report::generalize_report(char* filename){
+void report::generate_report(char* filename){
 	// Write file
 	ofstream outFile;
-    if (filename == "week_report.csv"){
+    if (filename == "weekly_report.csv"){
         outFile.open(filename, ios::out); // File mode omitted
         outFile << ",name,profession,age_group,medical_risk,waiting_time" << endl;
         outFile << "Treated" << endl;

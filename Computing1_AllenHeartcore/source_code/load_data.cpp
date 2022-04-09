@@ -20,16 +20,23 @@ int find_person(int id){
     return 0;
 }
 
+//  input:  current time: the time when the person is registered
+//          blacklist: the vector of people who have been put in blacklist
+//          localqueue_id: the id of the local queue the person should be put in
+//  output: the localqueue filled with patients.
+
+
+
 vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blacklist, int localqueue_id){
     char* filename;
     if (localqueue_id == 1)
-        filename = "local1.csv";
+        filename = "data/local1.csv";
     else if (localqueue_id ==2)
-        filename = "local2.csv";
+        filename = "data/local2.csv";
     else if (localqueue_id == 3)
-        filename = "local3.csv";
+        filename = "data/local3.csv";
     else
-        filename = "local4.csv";
+        filename = "data/local4.csv";
     ifstream inFile(filename, ios::in);
 	string lineStr;
     vector<personalinfo*> localqueue;
@@ -46,10 +53,10 @@ vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blac
 			lineArray.push_back(str);
 		strArray.push_back(lineArray);
 	}
-    if (strArray.size() <= 1)
+    if (strArray.size() <= 1){
+        inFile.close();
         return localqueue;
-
-        //if (op = 1, jump half a day)
+    }
     int i = 1;
     string date_input = strArray[i][7];
     stringstream ds(date_input);
@@ -60,9 +67,14 @@ vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blac
         date_input_array.push_back(date_int);
     }
     while(date_input_array[2] <= current_time->tm_mday){
+        if (i > strArray.size()-1){
+            inFile.close();
+            return localqueue;
+        }
         date_input = strArray[i][7];
         stringstream ds(date_input);
         date_input_array.clear();
+        // turn the string into vector
         while (getline(ds, date_string, ' ')){
             int date_int = stoi(date_string);
             date_input_array.push_back(date_int);
@@ -71,6 +83,7 @@ vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blac
         stringstream hs(hospital_input);
         string hospital_string;
         vector<int> hospital_array;
+        // turn the string into vector
         while (getline(hs, hospital_string, ' ')){
             int hospital_int = stoi(hospital_string);
             hospital_array.push_back(hospital_int);
@@ -79,6 +92,7 @@ vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blac
         stringstream dls(deadline_input);
         string deadline_string;
         vector<int> deadline_array;
+        // turn the string into vector
         while (getline(dls, deadline_string, '/')){
             int deadline_int = stoi(deadline_string);
             deadline_array.push_back(deadline_int);
@@ -87,6 +101,7 @@ vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blac
             i++;
             continue;
         }
+        // store the information into the personalinfo
         if ((date_input_array[2] == current_time -> tm_mday) && ((date_input_array[3] < 12 && current_time->tm_hour == 0) || (date_input_array[3] >= 12 && current_time->tm_hour == 12))){
             personalinfo* information = new personalinfo;
             information->id = stoi(strArray[i][1]);
@@ -133,7 +148,7 @@ vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blac
                 flag = 1;
             }
             if (information->medical_risk == 3){
-                information->priority = 9e11;    //is infinte accutually
+                information->priority = 9e11;    //is infinite accutually
                 flag = 1;
             }
             if (find_person(information->id)){
@@ -158,9 +173,6 @@ vector<personalinfo*> dataloading(tm_t* current_time, vector<personalinfo*> blac
             break;
         }
     }
+    inFile.close();
     return localqueue;
 }
-
-
-
-
