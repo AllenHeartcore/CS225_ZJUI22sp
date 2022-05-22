@@ -134,7 +134,7 @@ bool BPlusTree::remove_recursive(BPlusNode* target, int child_pos, bool is_leaf)
             target->patients[i] = target->patients[i - 1];                                      //         make space in T
         target->patients[0] = left_neighbor->patients[left_neighbor->size - 1];                 //     move patient from L to T
         left_neighbor->patients[left_neighbor->size - 1] = NULL;                                //         detach patient from L
-        update_internal_keys(target, true);                                                           //         update parent
+        update_internal_keys(target, true);                                                     //         update parent
         if (!is_leaf) {
             for (i = target->size; i > 0; i--)
                 target->children[i] = target->children[i - 1];                                  //         make space in T
@@ -152,7 +152,7 @@ bool BPlusTree::remove_recursive(BPlusNode* target, int child_pos, bool is_leaf)
         for (i = 0; i < right_neighbor->size - 1; i++)
             right_neighbor->patients[i] = right_neighbor->patients[i + 1];                      //         fill space in R
         right_neighbor->patients[right_neighbor->size - 1] = NULL;                              //         detach patient from R
-        update_internal_keys(right_neighbor, false);                                                   //         update parent
+        update_internal_keys(right_neighbor, false);                                            //         update parent
         if (!is_leaf) {
             target->children[target->size] = right_neighbor->children[0];                       //     move child from R to T
             target->children[target->size]->parent = target;                                    //         update child's parent
@@ -268,7 +268,6 @@ int main() {
             if (IDsheet->root == NULL) cout << "BPlusTree died.\n" << endl;
             else {
                 IDsheet->print(true);
-                //IDsheet->print(false);
             }
         }
     }
