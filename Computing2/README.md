@@ -1,4 +1,4 @@
-# ZJUI CS225 SP22 Computing Assignment 1 (Group E1)
+# ZJUI CS225 SP22 Computing Assignment 2 (Group E1)
 
 ## **Authors**
 
