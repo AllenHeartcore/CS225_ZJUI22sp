@@ -253,7 +253,7 @@ int main(){
                         cin >> choice;
                         switch (choice){
                             case 1:{
-                                cout << "\nPlease input the new medical risk: ";
+                                cout << "\nCurrent risk is " << IDsheet[i]->medical_risk << "\nPlease input the new medical risk: ";
                                 int risk;
                                 uint64_t new_priority;
                                 cin >> risk;
@@ -278,14 +278,14 @@ int main(){
 
                                 new_priority = IDsheet[i]->priority;
                                 if (IDsheet[i]->appointment == 0){
-                                    Fheap[inputid]->modify_key(inputid, new_priority);
+                                    Fheap[IDsheet[i]->treatment]->modify_key(inputid, new_priority);
                                 }
                                 system("clear");
                                 cout << "Patient " << inputid << "'s medical risk has been updated to " << risk << endl;
                                 break;
                             }
                             case 2:{
-                                cout << "\nPlease input the new profession: ";
+                                cout << "\nCurrent profession is " << IDsheet[i]->profession << "\nPlease input the new profession: ";
                                 int prof;
                                 cin >> prof;
                                 uint64_t new_priority;
@@ -309,7 +309,7 @@ int main(){
 
                                 new_priority = IDsheet[i]->priority;
                                 if (IDsheet[i]->appointment == 0){
-                                    Fheap[inputid]->modify_key(inputid, new_priority);
+                                    Fheap[IDsheet[i]->treatment]->modify_key(inputid, new_priority);
                                 }
                                 system("clear");
                                 cout << "Patient " << inputid << "'s profession has been updated to " << prof << endl;
