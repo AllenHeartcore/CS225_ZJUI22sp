@@ -260,6 +260,7 @@ public:
     bool is_leaf;
     int size;
     personalinfo **patients;
+    personalinfo **overflow_block;
     BPlusNode **children;
     BPlusNode *parent;
     BPlusNode *next;

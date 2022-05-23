@@ -32,7 +32,7 @@ int centerqueue::insert_node(centernode* node) {
 	return 0;
 }
 int centerqueue::delete_node(int id) {
-	if (modify_key(id, INF_NEG) == -1) return -1;   // ERROR: Non-existing ID
+	//if (modify_key(id, INF_NEG) == -1) return -1;   // ERROR: Non-existing ID
 	centernode* node = extract_min();
 	blacklist.push_back(node->person);
 	return 0;
